@@ -1,7 +1,6 @@
 from dataloader import load_students, load_hobbies, load_habits, load_edges
 from graph import Graph
 from recommender import Recommender
-import listing  
 
 def show_menu():
     print("=== MENU ===")
@@ -11,8 +10,30 @@ def show_menu():
     print("4. Liệt kê danh sách toàn bộ người dùng")
     print("5. Thoát")
 
+def list_users_with_friends(students, graph):
+
+    print("\n=== Danh sách toàn bộ người dùng ===")
+    print(f"{'MSSV':<10} {'Họ tên':<20} {'Bạn bè (MSSV)':<30}")
+    print("-" * 60)
+
+    for mssv, student in students.items():
+        # Lấy danh sách bạn bè dưới dạng list chuỗi MSSV
+        try:
+            friends = list(graph.neighbors(mssv))
+        except Exception:
+            friends = []  # Nếu mssv không có trong graph, coi như chưa có bạn bè
+        
+        
+        if friends:
+            friend_list = ", ".join(sorted(friends))
+        else:
+            friend_list = "Chưa có bạn bè"  
+
+        print(f"{mssv:<10} {student.name:<20} {friend_list:<30}")
+
+    print()    
+
 def main():
-    # đường dẫn data tuỳ theo máy bạn
     students = load_students(r'E:\timbanbe2-main\timbanbe2-main\FindFriendPY-main2\FindFriendPY-main\data\student_info.txt')
     load_hobbies(r'E:\timbanbe2-main\timbanbe2-main\FindFriendPY-main2\FindFriendPY-main\data\hobbyc.txt', students)
     load_habits(r'E:\timbanbe2-main\timbanbe2-main\FindFriendPY-main2\FindFriendPY-main\data\habitc.txt', students)
@@ -62,7 +83,7 @@ def main():
 
         elif choice == '4':
             # gọi hàm liệt kê từ listing.py
-            listing.list_users(students)
+            list_users_with_friends(students, recommender.graph)
 
         elif choice == '5':
             print("Thoát chương trình. Hẹn gặp lại!")
